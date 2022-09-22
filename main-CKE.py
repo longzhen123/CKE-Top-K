@@ -51,9 +51,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
     indicators = train(args)
 
-'''
-epoch: 51 	 eval: HR 0.5983 NDCG 0.4181 	 test: HR 0.5775 NDCG 0.4179
-
-
-
-'''

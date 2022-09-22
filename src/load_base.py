@@ -39,12 +39,8 @@ def data_split(ratings_np, item_set, ratio):
         pos_record = positive_records[user]
 
         size = len(pos_record)
-        test_size = 1
-        eval_size = 1
-
-        if size - 2 <= 0:
-            test_size = 0
-            eval_size = 0
+        test_size = int(size * 0.2)
+        eval_size = int(size * 0.1)
 
         test_indices = np.random.choice(size, test_size, replace=False)
         rem_indices = list(set(range(size)) - set(test_indices))
@@ -62,13 +58,14 @@ def data_split(ratings_np, item_set, ratio):
         neg_items = list(item_set - set(pos_record))
         train_neg_items = np.random.choice(neg_items, len(train_indices), replace=False).tolist()
         rem_neg_items = list(set(neg_items) - set(train_neg_items))
-        eval_neg_items = np.random.choice(rem_neg_items, 100, replace=False).tolist()
-        test_neg_items = np.random.choice(list(set(rem_neg_items) - set(eval_neg_items)), 100, replace=False).tolist()
+        eval_neg_items = np.random.choice(rem_neg_items, 50, replace=False).tolist()
+        test_neg_items = np.random.choice(list(set(rem_neg_items) - set(eval_neg_items)), 50, replace=False).tolist()
 
         train_set.extend([user, neg_item, 0] for neg_item in train_neg_items)
 
-        eval_records[user] = eval_neg_items + [pos_record[i] for i in eval_indices]
-        test_records[user] = test_neg_items + [pos_record[i] for i in test_indices]
+        if len(eval_indices) != 0:
+            eval_records[user] = eval_neg_items + np.random.choice([pos_record[i] for i in eval_indices], 1).tolist()
+            test_records[user] = test_neg_items + np.random.choice([pos_record[i] for i in test_indices], 1).tolist()
 
     return train_set, eval_records, test_records
 
